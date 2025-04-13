@@ -15,7 +15,8 @@ import {
     toggleRepeat,
     getQueue
 } from './api';
-import { handleAuthentication, getStoredAccessToken } from './auth';
+import { handleAuthentication } from './auth';
+import { getAccessToken } from './auth/tokenManager';
 import { PlaybackState } from './types';
 
 // Register the applet
@@ -23,7 +24,7 @@ const self = applets.register();
 
 // Set up action handlers
 self.setActionHandler('getCurrentPlaybackState', async (_params: any) => {
-    const accessToken = getStoredAccessToken();
+    const accessToken = getAccessToken();
     if (!accessToken) {
         throw new Error('No access token available');
     }
@@ -31,7 +32,7 @@ self.setActionHandler('getCurrentPlaybackState', async (_params: any) => {
 });
 
 self.setActionHandler('playTrack', async (params: any) => {
-    const accessToken = getStoredAccessToken();
+    const accessToken = getAccessToken();
     if (!accessToken) {
         throw new Error('No access token available');
     }
@@ -39,7 +40,7 @@ self.setActionHandler('playTrack', async (params: any) => {
 });
 
 self.setActionHandler('pausePlayback', async (_params: any) => {
-    const accessToken = getStoredAccessToken();
+    const accessToken = getAccessToken();
     if (!accessToken) {
         throw new Error('No access token available');
     }
@@ -47,7 +48,7 @@ self.setActionHandler('pausePlayback', async (_params: any) => {
 });
 
 self.setActionHandler('resumePlayback', async (_params: any) => {
-    const accessToken = getStoredAccessToken();
+    const accessToken = getAccessToken();
     if (!accessToken) {
         throw new Error('No access token available');
     }
@@ -55,7 +56,7 @@ self.setActionHandler('resumePlayback', async (_params: any) => {
 });
 
 self.setActionHandler('skipToNext', async (_params: any) => {
-    const accessToken = getStoredAccessToken();
+    const accessToken = getAccessToken();
     if (!accessToken) {
         throw new Error('No access token available');
     }
@@ -63,7 +64,7 @@ self.setActionHandler('skipToNext', async (_params: any) => {
 });
 
 self.setActionHandler('skipToPrevious', async (_params: any) => {
-    const accessToken = getStoredAccessToken();
+    const accessToken = getAccessToken();
     if (!accessToken) {
         throw new Error('No access token available');
     }
@@ -71,7 +72,7 @@ self.setActionHandler('skipToPrevious', async (_params: any) => {
 });
 
 self.setActionHandler('getPlaylists', async (_params: any) => {
-    const accessToken = getStoredAccessToken();
+    const accessToken = getAccessToken();
     if (!accessToken) {
         throw new Error('No access token available');
     }
@@ -79,7 +80,7 @@ self.setActionHandler('getPlaylists', async (_params: any) => {
 });
 
 self.setActionHandler('searchTracks', async (params: any) => {
-    const accessToken = getStoredAccessToken();
+    const accessToken = getAccessToken();
     if (!accessToken) {
         throw new Error('No access token available');
     }
@@ -87,7 +88,7 @@ self.setActionHandler('searchTracks', async (params: any) => {
 });
 
 self.setActionHandler('searchAlbums', async (params: any) => {
-    const accessToken = getStoredAccessToken();
+    const accessToken = getAccessToken();
     if (!accessToken) {
         throw new Error('No access token available');
     }
@@ -95,7 +96,7 @@ self.setActionHandler('searchAlbums', async (params: any) => {
 });
 
 self.setActionHandler('getRecentlyPlayed', async (_params: any) => {
-    const accessToken = getStoredAccessToken();
+    const accessToken = getAccessToken();
     if (!accessToken) {
         throw new Error('No access token available');
     }
@@ -103,7 +104,7 @@ self.setActionHandler('getRecentlyPlayed', async (_params: any) => {
 });
 
 self.setActionHandler('setVolume', async (params: any) => {
-    const accessToken = getStoredAccessToken();
+    const accessToken = getAccessToken();
     if (!accessToken) {
         throw new Error('No access token available');
     }
@@ -111,7 +112,7 @@ self.setActionHandler('setVolume', async (params: any) => {
 });
 
 self.setActionHandler('toggleShuffle', async (params: any) => {
-    const accessToken = getStoredAccessToken();
+    const accessToken = getAccessToken();
     if (!accessToken) {
         throw new Error('No access token available');
     }
@@ -119,7 +120,7 @@ self.setActionHandler('toggleShuffle', async (params: any) => {
 });
 
 self.setActionHandler('toggleRepeat', async (params: any) => {
-    const accessToken = getStoredAccessToken();
+    const accessToken = getAccessToken();
     if (!accessToken) {
         throw new Error('No access token available');
     }
@@ -127,7 +128,7 @@ self.setActionHandler('toggleRepeat', async (params: any) => {
 });
 
 self.setActionHandler('getQueue', async (_params: any) => {
-    const accessToken = getStoredAccessToken();
+    const accessToken = getAccessToken();
     if (!accessToken) {
         throw new Error('No access token available');
     }
@@ -170,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Create a closure for updatePlaybackState that captures the current access token
     const createUpdatePlaybackState = () => {
-        const accessToken = getStoredAccessToken();
+        const accessToken = getAccessToken();
         if (!accessToken) {
             console.error('No access token available');
             return null;
@@ -190,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Play/Pause button
     playPauseBtn?.addEventListener('click', async () => {
-        const accessToken = getStoredAccessToken();
+        const accessToken = getAccessToken();
         if (!accessToken) {
             console.error('No access token available');
             return;
@@ -217,7 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Previous button
     previousBtn?.addEventListener('click', async () => {
-        const accessToken = getStoredAccessToken();
+        const accessToken = getAccessToken();
         if (!accessToken) {
             console.error('No access token available');
             return;
@@ -234,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Next button
     nextBtn?.addEventListener('click', async () => {
-        const accessToken = getStoredAccessToken();
+        const accessToken = getAccessToken();
         if (!accessToken) {
             console.error('No access token available');
             return;
@@ -251,7 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Volume control
     volumeBtn?.addEventListener('click', async () => {
-        const accessToken = getStoredAccessToken();
+        const accessToken = getAccessToken();
         if (!accessToken) {
             console.error('No access token available');
             return;
@@ -267,7 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Search functionality
     searchInput?.addEventListener('input', async (e) => {
-        const accessToken = getStoredAccessToken();
+        const accessToken = getAccessToken();
         if (!accessToken) {
             console.error('No access token available');
             return;
@@ -297,7 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     playlistTab?.addEventListener('click', async () => {
-        const accessToken = getStoredAccessToken();
+        const accessToken = getAccessToken();
         if (!accessToken) {
             console.error('No access token available');
             return;
@@ -315,7 +316,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     recentlyPlayedTab?.addEventListener('click', async () => {
-        const accessToken = getStoredAccessToken();
+        const accessToken = getAccessToken();
         if (!accessToken) {
             console.error('No access token available');
             return;
@@ -334,7 +335,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Shuffle button
     shuffleBtn?.addEventListener('click', async () => {
-        const accessToken = getStoredAccessToken();
+        const accessToken = getAccessToken();
         if (!accessToken) {
             console.error('No access token available');
             return;
@@ -357,7 +358,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Repeat button
     repeatBtn?.addEventListener('click', async () => {
-        const accessToken = getStoredAccessToken();
+        const accessToken = getAccessToken();
         if (!accessToken) {
             console.error('No access token available');
             return;
@@ -399,7 +400,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function startPlaybackUpdates(accessToken: string) {
     const updatePlaybackState = async () => {
         try {
-            const currentToken = getStoredAccessToken();
+            const currentToken = getAccessToken();
             if (!currentToken) {
                 console.log('Access token expired or not available, re-authenticating...');
                 const newToken = await handleAuthentication();
@@ -486,7 +487,7 @@ function updateNowPlayingUI(state: PlaybackState | null) {
         if (contextType === 'playlist') {
             // Fetch playlist details to get the name
             const fetchPlaylistName = async () => {
-                const accessToken = getStoredAccessToken();
+                const accessToken = getAccessToken();
                 if (!accessToken) return;
 
                 try {
@@ -519,7 +520,7 @@ function updateNowPlayingUI(state: PlaybackState | null) {
 
     // Update next track information
     const updateQueueInfo = async () => {
-        const accessToken = getStoredAccessToken();
+        const accessToken = getAccessToken();
         if (!accessToken) return;
 
         try {
@@ -597,7 +598,7 @@ function displaySearchResults(results: { tracks: any, albums: any }) {
             const uri = track.getAttribute('data-uri');
             if (uri) {
                 try {
-                    const accessToken = getStoredAccessToken();
+                    const accessToken = getAccessToken();
                     if (accessToken) {
                         await playTrack({ accessToken, trackUri: uri });
                         // Update the UI to show the currently playing track
@@ -618,7 +619,7 @@ function displaySearchResults(results: { tracks: any, albums: any }) {
             const uri = album.getAttribute('data-uri');
             if (uri) {
                 try {
-                    const accessToken = getStoredAccessToken();
+                    const accessToken = getAccessToken();
                     if (accessToken) {
                         await playTrack({ 
                             accessToken, 
@@ -639,20 +640,7 @@ function displayPlaylists(playlists: any) {
     if (!container) return;
 
     container.innerHTML = '';
-    
-    // Sort playlists by recently played
-    const sortedPlaylists = [...playlists.items].sort((a, b) => {
-        // If either playlist has no tracks, put it at the end
-        if (!a.tracks || !b.tracks) return 0;
-        
-        // Sort by the last played timestamp if available
-        const aLastPlayed = a.tracks.last_played || 0;
-        const bLastPlayed = b.tracks.last_played || 0;
-        
-        return bLastPlayed - aLastPlayed;
-    });
-
-    sortedPlaylists.forEach((playlist: any) => {
+    playlists.items.forEach((playlist: any) => {
         const card = document.createElement('div');
         card.className = 'content-card';
         
@@ -661,20 +649,14 @@ function displayPlaylists(playlists: any) {
             ? playlist.images[0].url 
             : 'https://via.placeholder.com/150?text=No+Image';
             
-        // Add last played time if available
-        const lastPlayedText = playlist.tracks?.last_played 
-            ? `<p class="last-played">Last played: ${new Date(playlist.tracks.last_played).toLocaleDateString()}</p>`
-            : '';
-            
         card.innerHTML = `
             <img src="${imageUrl}" alt="${playlist.name}">
             <h3>${playlist.name}</h3>
             <p>${playlist.tracks.total} tracks</p>
-            ${lastPlayedText}
         `;
         card.addEventListener('click', async () => {
             try {
-                const accessToken = getStoredAccessToken();
+                const accessToken = getAccessToken();
                 if (!accessToken) return;
 
                 // Show loading state
@@ -771,7 +753,7 @@ function displayRecentlyPlayed(recentlyPlayed: any) {
             <p>${item.track.artists.map((a: any) => a.name).join(', ')}</p>
         `;
         card.addEventListener('click', () => {
-            const accessToken = getStoredAccessToken();
+            const accessToken = getAccessToken();
             if (accessToken) {
                 playTrack({ accessToken, trackUri: item.track.uri });
             }

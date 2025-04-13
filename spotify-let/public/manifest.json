@@ -12,13 +12,8 @@
       "description": "Get information about the current playback state",
       "params_schema": {
         "type": "object",
-        "properties": {
-          "accessToken": {
-            "type": "string",
-            "description": "Spotify access token"
-          }
-        },
-        "required": ["accessToken"]
+        "properties": {},
+        "required": []
       }
     },
     "playTrack": {
@@ -27,10 +22,6 @@
       "params_schema": {
         "type": "object",
         "properties": {
-          "accessToken": {
-            "type": "string",
-            "description": "Spotify access token"
-          },
           "trackUri": {
             "type": "string",
             "description": "URI of the track to play"
@@ -40,7 +31,7 @@
             "description": "Optional URI of the context (playlist) to play from"
           }
         },
-        "required": ["accessToken", "trackUri"]
+        "required": ["trackUri"]
       }
     },
     "pausePlayback": {
@@ -48,13 +39,8 @@
       "description": "Pause the current playback",
       "params_schema": {
         "type": "object",
-        "properties": {
-          "accessToken": {
-            "type": "string",
-            "description": "Spotify access token"
-          }
-        },
-        "required": ["accessToken"]
+        "properties": {},
+        "required": []
       }
     },
     "resumePlayback": {
@@ -62,13 +48,8 @@
       "description": "Resume paused playback",
       "params_schema": {
         "type": "object",
-        "properties": {
-          "accessToken": {
-            "type": "string",
-            "description": "Spotify access token"
-          }
-        },
-        "required": ["accessToken"]
+        "properties": {},
+        "required": []
       }
     },
     "skipToNext": {
@@ -76,13 +57,8 @@
       "description": "Skip to the next track in the queue",
       "params_schema": {
         "type": "object",
-        "properties": {
-          "accessToken": {
-            "type": "string",
-            "description": "Spotify access token"
-          }
-        },
-        "required": ["accessToken"]
+        "properties": {},
+        "required": []
       }
     },
     "skipToPrevious": {
@@ -90,13 +66,8 @@
       "description": "Skip to the previous track",
       "params_schema": {
         "type": "object",
-        "properties": {
-          "accessToken": {
-            "type": "string",
-            "description": "Spotify access token"
-          }
-        },
-        "required": ["accessToken"]
+        "properties": {},
+        "required": []
       }
     },
     "getPlaylists": {
@@ -104,13 +75,8 @@
       "description": "Get user's playlists",
       "params_schema": {
         "type": "object",
-        "properties": {
-          "accessToken": {
-            "type": "string",
-            "description": "Spotify access token"
-          }
-        },
-        "required": ["accessToken"]
+        "properties": {},
+        "required": []
       }
     },
     "searchTracks": {
@@ -119,16 +85,12 @@
       "params_schema": {
         "type": "object",
         "properties": {
-          "accessToken": {
-            "type": "string",
-            "description": "Spotify access token"
-          },
           "query": {
             "type": "string",
             "description": "Search query"
           }
         },
-        "required": ["accessToken", "query"]
+        "required": ["query"]
       }
     },
     "getRecentlyPlayed": {
@@ -136,13 +98,8 @@
       "description": "Get recently played tracks",
       "params_schema": {
         "type": "object",
-        "properties": {
-          "accessToken": {
-            "type": "string",
-            "description": "Spotify access token"
-          }
-        },
-        "required": ["accessToken"]
+        "properties": {},
+        "required": []
       }
     },
     "setVolume": {
@@ -151,10 +108,6 @@
       "params_schema": {
         "type": "object",
         "properties": {
-          "accessToken": {
-            "type": "string",
-            "description": "Spotify access token"
-          },
           "volumePercent": {
             "type": "number",
             "description": "Volume percentage (0-100)",
@@ -162,7 +115,7 @@
             "maximum": 100
           }
         },
-        "required": ["accessToken", "volumePercent"]
+        "required": ["volumePercent"]
       }
     }
   }

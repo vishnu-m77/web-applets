@@ -1,6 +1,7 @@
 import { redirectToAuthCodeFlow, getAccessToken as getAuthCodeAccessToken } from "../authCodeWithPkce";
 import { UserProfile } from "../types";
 import { populateUI } from "../ui";
+import { setAccessToken, clearAccessToken } from './tokenManager';
 
 const clientId = "4e9b9eeca37441839b3305512f084064";
 const TOKEN_KEY = 'spotify_access_token';
@@ -16,8 +17,7 @@ export const getStoredAccessToken = (): string | null => {
     
     // Check if token is expired
     if (Date.now() > parseInt(expiry)) {
-        localStorage.removeItem(TOKEN_KEY);
-        localStorage.removeItem(TOKEN_EXPIRY_KEY);
+        clearAccessToken();
         return null;
     }
     
@@ -49,7 +49,7 @@ export const handleAuthentication = async (): Promise<string | null> => {
         }
         
         // Store the access token and its expiry
-        storeAccessToken(result.access_token, result.expires_in);
+        setAccessToken(result.access_token, result.expires_in);
         
         console.log('Access token received, fetching profile...');
         const profile = await fetchProfile(result.access_token);
