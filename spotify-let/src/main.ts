@@ -642,8 +642,14 @@ function displayPlaylists(playlists: any) {
     playlists.items.forEach((playlist: any) => {
         const card = document.createElement('div');
         card.className = 'content-card';
+        
+        // Add fallback for playlists without images
+        const imageUrl = playlist.images && playlist.images.length > 0 
+            ? playlist.images[0].url 
+            : 'https://via.placeholder.com/150?text=No+Image';
+            
         card.innerHTML = `
-            <img src="${playlist.images[0].url}" alt="${playlist.name}">
+            <img src="${imageUrl}" alt="${playlist.name}">
             <h3>${playlist.name}</h3>
             <p>${playlist.tracks.total} tracks</p>
         `;
@@ -664,22 +670,29 @@ function displayPlaylists(playlists: any) {
                 // Display tracks in the same scrollable container
                 container.innerHTML = `
                     <div class="content-card playlist-header">
-                        <img src="${playlist.images[0].url}" alt="${playlist.name}">
+                        <img src="${imageUrl}" alt="${playlist.name}">
                         <h3>${playlist.name}</h3>
                         <p>${playlist.tracks.total} tracks</p>
                     </div>
                     <div class="content-card back-button" id="backToPlaylists">
                         <span>← Back to Playlists</span>
                     </div>
-                    ${tracks.items.map((item: any, _index: number) => `
-                        <div class="content-card track-item" data-uri="${item.track.uri}">
-                            <img src="${item.track.album.images[0].url}" alt="${item.track.name}">
-                            <div class="track-info">
-                                <h4>${item.track.name}</h4>
-                                <p>${item.track.artists.map((a: any) => a.name).join(', ')}</p>
+                    ${tracks.items.map((item: any, _index: number) => {
+                        // Add fallback for tracks without album images
+                        const trackImageUrl = item.track.album.images && item.track.album.images.length > 0
+                            ? item.track.album.images[0].url
+                            : 'https://via.placeholder.com/50?text=No+Image';
+                            
+                        return `
+                            <div class="content-card track-item" data-uri="${item.track.uri}">
+                                <img src="${trackImageUrl}" alt="${item.track.name}">
+                                <div class="track-info">
+                                    <h4>${item.track.name}</h4>
+                                    <p>${item.track.artists.map((a: any) => a.name).join(', ')}</p>
+                                </div>
                             </div>
-                        </div>
-                    `).join('')}
+                        `;
+                    }).join('')}
                 `;
 
                 // Add back button handler
