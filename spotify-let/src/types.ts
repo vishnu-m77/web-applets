@@ -1,23 +1,23 @@
 // Spotify API Type Definitions
 
 // Common Types
-interface ExternalUrls {
+export interface ExternalUrls {
     spotify: string;
 }
 
-interface Image {
+export interface Image {
     url: string;
     height: number | null;
     width: number | null;
 }
 
-interface Followers {
+export interface Followers {
     href: string | null;
     total: number;
 }
 
 // User Profile Types
-interface UserProfile {
+export interface UserProfile {
     display_name: string;
     email: string;
     external_urls: ExternalUrls;
@@ -31,7 +31,7 @@ interface UserProfile {
 }
 
 // Playback Types
-interface PlaybackState {
+export interface PlaybackState {
     device: Device;
     repeat_state: 'off' | 'track' | 'context';
     shuffle_state: boolean;
@@ -44,7 +44,7 @@ interface PlaybackState {
     actions: Actions;
 }
 
-interface Device {
+export interface Device {
     id: string | null;
     is_active: boolean;
     is_private_session: boolean;
@@ -55,14 +55,14 @@ interface Device {
     supports_volume: boolean;
 }
 
-interface Context {
+export interface Context {
     external_urls: ExternalUrls;
     href: string;
     type: string;
     uri: string;
 }
 
-interface Actions {
+export interface Actions {
     interrupting_playback: boolean;
     pausing: boolean;
     resuming: boolean;
@@ -76,7 +76,7 @@ interface Actions {
 }
 
 // Track Types
-interface Track {
+export interface Track {
     album: Album;
     artists: Artist[];
     available_markets: string[];
@@ -98,7 +98,7 @@ interface Track {
     uri: string;
 }
 
-interface Album {
+export interface Album {
     album_type: string;
     artists: Artist[];
     available_markets: string[];
@@ -114,7 +114,7 @@ interface Album {
     uri: string;
 }
 
-interface Artist {
+export interface Artist {
     external_urls: ExternalUrls;
     followers: Followers;
     genres: string[];
@@ -128,7 +128,7 @@ interface Artist {
 }
 
 // Playlist Types
-interface Playlist {
+export interface Playlist {
     collaborative: boolean;
     description: string | null;
     external_urls: ExternalUrls;
@@ -145,13 +145,13 @@ interface Playlist {
     uri: string;
 }
 
-interface PlaylistTracks {
+export interface PlaylistTracks {
     href: string;
     total: number;
     items: PlaylistTrack[];
 }
 
-interface PlaylistTrack {
+export interface PlaylistTrack {
     added_at: string;
     added_by: UserProfile;
     is_local: boolean;
@@ -159,17 +159,37 @@ interface PlaylistTrack {
 }
 
 // Search Types
-interface SearchResults {
+export interface SearchResults {
     tracks: {
-        href: string;
-        items: Track[];
-        limit: number;
-        next: string | null;
+        items: Array<{
+            uri: string;
+            name: string;
+            artists: Array<{
+                name: string;
+            }>;
+            album: {
+                images: Array<{
+                    url: string;
+                }>;
+            };
+        }>;
+    };
+    albums: {
+        items: Array<{
+            uri: string;
+            name: string;
+            artists: Array<{
+                name: string;
+            }>;
+            images: Array<{
+                url: string;
+            }>;
+        }>;
     };
 }
 
 // Recently Played Types
-interface RecentlyPlayed {
+export interface RecentlyPlayed {
     items: PlayHistory[];
     next: string | null;
     cursors: {
@@ -180,14 +200,14 @@ interface RecentlyPlayed {
     href: string;
 }
 
-interface PlayHistory {
+export interface PlayHistory {
     track: Track;
     played_at: string;
     context: Context | null;
 }
 
 // API Response Types
-interface ApiError {
+export interface ApiError {
     error: {
         status: number;
         message: string;
@@ -195,45 +215,64 @@ interface ApiError {
 }
 
 // API Request Types
-interface PlayTrackParams {
-    accessToken: string;
-    trackUri: string;
-}
-
-interface SetVolumeParams {
-    accessToken: string;
-    volumePercent: number;
-}
-
-interface SearchTracksParams {
+export interface SearchParams {
     accessToken: string;
     query: string;
 }
 
-interface GetPlaylistsParams {
+export interface PlayTrackParams {
+    accessToken: string;
+    trackUri: string;
+    contextUri?: string;
+}
+
+export interface SetVolumeParams {
+    accessToken: string;
+    volumePercent: number;
+}
+
+export interface GetPlaylistsParams {
     accessToken: string;
 }
 
-interface GetRecentlyPlayedParams {
+export interface GetRecentlyPlayedParams {
     accessToken: string;
 }
 
-interface GetCurrentPlaybackStateParams {
+export interface GetCurrentPlaybackStateParams {
     accessToken: string;
 }
 
-interface PausePlaybackParams {
+export interface PausePlaybackParams {
     accessToken: string;
 }
 
-interface ResumePlaybackParams {
+export interface ResumePlaybackParams {
     accessToken: string;
 }
 
-interface SkipToNextParams {
+export interface SkipToNextParams {
     accessToken: string;
 }
 
-interface SkipToPreviousParams {
+export interface SkipToPreviousParams {
     accessToken: string;
 }
+
+export interface ToggleShuffleParams {
+    accessToken: string;
+    state: boolean;
+}
+
+export interface ToggleRepeatParams {
+    accessToken: string;
+    state: 'off' | 'track' | 'context';
+}
+
+export interface ExternalIds {
+    isrc: string;
+}
+
+export interface Disallows {
+    resuming: boolean;
+} 

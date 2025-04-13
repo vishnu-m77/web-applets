@@ -1,0 +1,172 @@
+.playlist-header {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.playlist-header img {
+    width: 150px;
+    height: 150px;
+    border-radius: 8px;
+    margin-right: 20px;
+}
+
+.playlist-header h2 {
+    margin: 0;
+    font-size: 24px;
+    color: white;
+}
+
+.playlist-header p {
+    margin: 5px 0 0;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.tracks-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.back-button {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: background-color 0.2s;
+}
+
+.back-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.back-button span {
+    color: white;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.track-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-bottom: 10px;
+}
+
+.track-item img {
+    width: 50px;
+    height: 50px;
+    border-radius: 4px;
+    margin-right: 15px;
+}
+
+.track-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.track-item.playing {
+    background: rgba(30, 215, 96, 0.2);
+}
+
+.track-number {
+    width: 30px;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.track-info {
+    flex: 1;
+}
+
+.track-info h4 {
+    margin: 0;
+    color: white;
+    font-size: 16px;
+}
+
+.track-info p {
+    margin: 5px 0 0;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+}
+
+.track-duration {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 14px;
+}
+
+.loading {
+    text-align: center;
+    padding: 20px;
+    color: white;
+}
+
+.error {
+    text-align: center;
+    padding: 20px;
+    color: #ff4444;
+}
+
+.search-section {
+    margin-bottom: 30px;
+}
+
+.search-section h3 {
+    color: white;
+    margin-bottom: 15px;
+    font-size: 20px;
+}
+
+.tracks-list, .albums-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.album-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-bottom: 10px;
+}
+
+.album-item img {
+    width: 50px;
+    height: 50px;
+    border-radius: 4px;
+    margin-right: 15px;
+}
+
+.album-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.album-info {
+    flex: 1;
+}
+
+.album-info h4 {
+    margin: 0;
+    color: white;
+    font-size: 16px;
+}
+
+.album-info p {
+    margin: 5px 0 0;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+} 

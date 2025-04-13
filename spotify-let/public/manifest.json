@@ -34,6 +34,10 @@
           "trackUri": {
             "type": "string",
             "description": "URI of the track to play"
+          },
+          "contextUri": {
+            "type": "string",
+            "description": "Optional URI of the context (playlist) to play from"
           }
         },
         "required": ["accessToken", "trackUri"]
@@ -111,7 +115,7 @@
     },
     "searchTracks": {
       "name": "Search Tracks",
-      "description": "Search for tracks",
+      "description": "Search for tracks and albums",
       "params_schema": {
         "type": "object",
         "properties": {
@@ -143,7 +147,7 @@
     },
     "setVolume": {
       "name": "Set Volume",
-      "description": "Set playback volume",
+      "description": "Set the playback volume",
       "params_schema": {
         "type": "object",
         "properties": {

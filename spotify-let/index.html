@@ -473,115 +473,68 @@
         color: #b3b3b3;
         font-size: 0.9em;
       }
-
-      /* Initial auth page styles */
-      .auth-page {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-        background-color: #121212;
-        color: white;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-      }
-
-      .auth-button {
-        background-color: #1DB954;
-        color: white;
-        border: none;
-        padding: 15px 30px;
-        border-radius: 25px;
-        font-size: 16px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: background-color 0.3s;
-      }
-
-      .auth-button:hover {
-        background-color: #1ed760;
-      }
-
-      .auth-title {
-        font-size: 24px;
-        margin-bottom: 20px;
-      }
-
-      /* Hide the main app content initially */
-      .app-content {
-        display: none;
-      }
     </style>
   </head>
   <body>
-    <!-- Initial Authentication Page -->
-    <div id="authPage" class="auth-page">
-      <h1 class="auth-title">Spotify Applet</h1>
-      <button id="authButton" class="auth-button">Connect with Spotify</button>
-    </div>
+    <div class="container">
+      <div class="profile-section">
+        <img id="avatar" class="avatar" src="" alt="Profile" />
+        <div class="profile-info">
+          <h2 id="displayName">Loading...</h2>
+          <p id="email"></p>
+        </div>
+      </div>
 
-    <!-- Main App Content (hidden initially) -->
-    <div id="appContent" class="app-content">
-      <div class="container">
-        <div class="profile-section">
-          <img id="avatar" class="avatar" src="" alt="Profile" />
-          <div class="profile-info">
-            <h2 id="displayName">Loading...</h2>
-            <p id="email"></p>
+      <div class="now-playing section">
+        <img id="nowPlayingArt" class="album-art" src="#" alt="Album Art" />
+        <div class="now-playing-info">
+          <h3 id="nowPlayingTitle">No track playing</h3>
+          <p id="nowPlayingArtist"></p>
+          <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+          </div>
+          <div class="time-info">
+            <span id="currentTime">0:00</span>
+            <span id="totalTime">0:00</span>
+          </div>
+          <div class="playback-controls">
+            <button id="previousBtn" class="previous">⏮️</button>
+            <button id="shuffleBtn" class="shuffle" title="Toggle shuffle" data-state="off">🔀</button>
+            <button id="playPauseBtn" class="play-pause">▶️</button>
+            <button id="repeatBtn" class="repeat" title="Toggle repeat" data-state="off">🔁</button>
+            <button id="nextBtn" class="next">⏭️</button>
+          </div>
+          <div class="playlist-info" id="playlistInfo">
+            <h4>Playing from: <span id="playlistName">-</span></h4>
+            <p>Next up: <span id="nextTrack">-</span></p>
           </div>
         </div>
+      </div>
 
-        <div class="now-playing section">
-          <img id="nowPlayingArt" class="album-art" src="#" alt="Album Art" />
-          <div class="now-playing-info">
-            <h3 id="nowPlayingTitle">No track playing</h3>
-            <p id="nowPlayingArtist"></p>
-            <div class="progress-container">
-              <div class="progress-bar" id="progressBar"></div>
-            </div>
-            <div class="time-info">
-              <span id="currentTime">0:00</span>
-              <span id="totalTime">0:00</span>
-            </div>
-            <div class="playback-controls">
-              <button id="previousBtn" class="previous">⏮️</button>
-              <button id="shuffleBtn" class="shuffle" title="Toggle shuffle" data-state="off">🔀</button>
-              <button id="playPauseBtn" class="play-pause">▶️</button>
-              <button id="repeatBtn" class="repeat" title="Toggle repeat" data-state="off">🔁</button>
-              <button id="nextBtn" class="next">⏭️</button>
-            </div>
-            <div class="playlist-info" id="playlistInfo">
-              <h4>Playing from: <span id="playlistName">-</span></h4>
-              <p>Next up: <span id="nextTrack">-</span></p>
-            </div>
-          </div>
+      <div class="section search-section">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search for songs, artists, or albums...">
+        <div class="content-tabs">
+          <div class="content-tab" id="searchTab">Search</div>
+          <div class="content-tab" id="playlistTab">Your Playlists</div>
+          <div class="content-tab" id="recentlyPlayedTab">Recently Played</div>
         </div>
-
-        <div class="section search-section">
-          <input type="text" id="searchInput" class="search-input" placeholder="Search for songs, artists, or albums...">
-          <div class="content-tabs">
-            <div class="content-tab" id="searchTab">Search</div>
-            <div class="content-tab" id="playlistTab">Your Playlists</div>
-            <div class="content-tab" id="recentlyPlayedTab">Recently Played</div>
-          </div>
-          <div id="contentContainer" class="content-grid">
-            <!-- Content will be dynamically populated here -->
-          </div>
-          <div id="loadingSpinner" class="loading-spinner"></div>
+        <div id="contentContainer" class="content-grid">
+          <!-- Content will be dynamically populated here -->
         </div>
+        <div id="loadingSpinner" class="loading-spinner"></div>
+      </div>
 
-        <div class="section">
-          <h2>Volume Control</h2>
-          <div class="controls">
-            <div class="control-group">
-              <input type="range" id="volumeInput" min="0" max="100" value="50" />
-              <button id="volumeBtn">Set Volume</button>
-            </div>
+      <div class="section">
+        <h2>Volume Control</h2>
+        <div class="controls">
+          <div class="control-group">
+            <input type="range" id="volumeInput" min="0" max="100" value="50" />
+            <button id="volumeBtn">Set Volume</button>
           </div>
         </div>
       </div>
     </div>
 
-    <script type="module" src="/src/script.ts"></script>
+    <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
