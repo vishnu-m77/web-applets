@@ -639,7 +639,20 @@ function displayPlaylists(playlists: any) {
     if (!container) return;
 
     container.innerHTML = '';
-    playlists.items.forEach((playlist: any) => {
+    
+    // Sort playlists by recently played
+    const sortedPlaylists = [...playlists.items].sort((a, b) => {
+        // If either playlist has no tracks, put it at the end
+        if (!a.tracks || !b.tracks) return 0;
+        
+        // Sort by the last played timestamp if available
+        const aLastPlayed = a.tracks.last_played || 0;
+        const bLastPlayed = b.tracks.last_played || 0;
+        
+        return bLastPlayed - aLastPlayed;
+    });
+
+    sortedPlaylists.forEach((playlist: any) => {
         const card = document.createElement('div');
         card.className = 'content-card';
         
@@ -648,10 +661,16 @@ function displayPlaylists(playlists: any) {
             ? playlist.images[0].url 
             : 'https://via.placeholder.com/150?text=No+Image';
             
+        // Add last played time if available
+        const lastPlayedText = playlist.tracks?.last_played 
+            ? `<p class="last-played">Last played: ${new Date(playlist.tracks.last_played).toLocaleDateString()}</p>`
+            : '';
+            
         card.innerHTML = `
             <img src="${imageUrl}" alt="${playlist.name}">
             <h3>${playlist.name}</h3>
             <p>${playlist.tracks.total} tracks</p>
+            ${lastPlayedText}
         `;
         card.addEventListener('click', async () => {
             try {
