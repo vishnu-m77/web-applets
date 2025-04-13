@@ -1,17 +1,74 @@
 import { PlaybackState, GetCurrentPlaybackStateParams, PausePlaybackParams, ResumePlaybackParams, SkipToNextParams, SkipToPreviousParams, PlayTrackParams, SetVolumeParams, ToggleShuffleParams, ToggleRepeatParams } from '../types';
 
-export const getCurrentPlaybackState = async ({ accessToken }: GetCurrentPlaybackStateParams): Promise<PlaybackState> => {
-    const response = await fetch('https://api.spotify.com/v1/me/player', {
-        headers: {
-            'Authorization': `Bearer ${accessToken}`
+export const getCurrentPlaybackState = async ({ accessToken }: GetCurrentPlaybackStateParams): Promise<PlaybackState | null> => {
+    try {
+        const response = await fetch('https://api.spotify.com/v1/me/player', {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        });
+
+        if (response.status === 204) {
+            // No active device, but we can still get the current playback state
+            const currentlyPlayingResponse = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            });
+
+            if (currentlyPlayingResponse.status === 204) {
+                return null; // No track is currently playing
+            }
+
+            if (!currentlyPlayingResponse.ok) {
+                throw new Error(`Failed to get currently playing track: ${currentlyPlayingResponse.statusText}`);
+            }
+
+            const data = await currentlyPlayingResponse.json();
+            return {
+                device: {
+                    id: null,
+                    is_active: false,
+                    is_private_session: false,
+                    is_restricted: false,
+                    name: 'No active device',
+                    type: 'unknown',
+                    volume_percent: 0,
+                    supports_volume: false
+                },
+                repeat_state: 'off',
+                shuffle_state: false,
+                context: null,
+                timestamp: Date.now(),
+                progress_ms: data.progress_ms || 0,
+                is_playing: data.is_playing || false,
+                item: data.item || null,
+                currently_playing_type: data.currently_playing_type || 'unknown',
+                actions: {
+                    interrupting_playback: false,
+                    pausing: false,
+                    resuming: false,
+                    seeking: false,
+                    skipping_next: false,
+                    skipping_prev: false,
+                    toggling_repeat_context: false,
+                    toggling_shuffle: false,
+                    toggling_repeat_track: false,
+                    transferring_playback: false
+                }
+            };
         }
-    });
 
-    if (!response.ok) {
-        throw new Error(`Failed to get playback state: ${response.statusText}`);
+        if (!response.ok) {
+            throw new Error(`Failed to get playback state: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        return data as PlaybackState;
+    } catch (error) {
+        console.error('Error getting playback state:', error);
+        return null;
     }
-
-    return await response.json();
 };
 
 export const playTrack = async ({ accessToken, trackUri, contextUri }: PlayTrackParams): Promise<void> => {

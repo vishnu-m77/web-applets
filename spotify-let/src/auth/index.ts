@@ -3,10 +3,31 @@ import { UserProfile } from "../types";
 import { populateUI } from "../ui";
 
 const clientId = "4e9b9eeca37441839b3305512f084064";
-let globalAccessToken: string | null = null;
+const TOKEN_KEY = 'spotify_access_token';
+const TOKEN_EXPIRY_KEY = 'spotify_token_expiry';
 
 export const getStoredAccessToken = (): string | null => {
-    return globalAccessToken;
+    const token = localStorage.getItem(TOKEN_KEY);
+    const expiry = localStorage.getItem(TOKEN_EXPIRY_KEY);
+    
+    if (!token || !expiry) {
+        return null;
+    }
+    
+    // Check if token is expired
+    if (Date.now() > parseInt(expiry)) {
+        localStorage.removeItem(TOKEN_KEY);
+        localStorage.removeItem(TOKEN_EXPIRY_KEY);
+        return null;
+    }
+    
+    return token;
+};
+
+export const storeAccessToken = (token: string, expiresIn: number) => {
+    const expiryTime = Date.now() + (expiresIn * 1000);
+    localStorage.setItem(TOKEN_KEY, token);
+    localStorage.setItem(TOKEN_EXPIRY_KEY, expiryTime.toString());
 };
 
 export const handleAuthentication = async (): Promise<string | null> => {
@@ -21,21 +42,21 @@ export const handleAuthentication = async (): Promise<string | null> => {
 
     try {
         console.log('Code found, getting access token...');
-        const accessToken = await getAuthCodeAccessToken(clientId, code);
+        const result = await getAuthCodeAccessToken(clientId, code);
         
-        if (!accessToken) {
+        if (!result.access_token) {
             throw new Error('Failed to get access token');
         }
         
-        // Store the access token globally
-        globalAccessToken = accessToken;
+        // Store the access token and its expiry
+        storeAccessToken(result.access_token, result.expires_in);
         
         console.log('Access token received, fetching profile...');
-        const profile = await fetchProfile(accessToken);
+        const profile = await fetchProfile(result.access_token);
         console.log('Profile fetched successfully:', profile);
         populateUI(profile);
         
-        return accessToken;
+        return result.access_token;
     } catch (error) {
         console.error('Error during authentication:', error);
         if (error instanceof Error) {
@@ -53,7 +74,7 @@ export const handleAuthentication = async (): Promise<string | null> => {
         if (displayName) {
             displayName.innerText = "Error loading profile. Please check console for details.";
         }
-        throw error;
+        return null;
     }
 };
 

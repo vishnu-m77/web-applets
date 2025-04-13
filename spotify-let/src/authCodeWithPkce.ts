@@ -46,7 +46,11 @@ export async function getAccessToken(clientId: string, code: string) {
         throw new Error('No access token in response');
     }
 
-    return data.access_token;
+    return {
+        access_token: data.access_token,
+        expires_in: data.expires_in,
+        refresh_token: data.refresh_token
+    };
 }
 
 function generateCodeVerifier(length: number) {

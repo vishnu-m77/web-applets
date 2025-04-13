@@ -16,6 +16,7 @@ import {
     getQueue
 } from './api';
 import { handleAuthentication, getStoredAccessToken } from './auth';
+import { PlaybackState } from './types';
 
 // Register the applet
 const self = applets.register();
@@ -197,6 +198,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const state = await getCurrentPlaybackState({ accessToken });
+            if (!state) {
+                console.log('No active playback state');
+                return;
+            }
+            
             if (state.is_playing) {
                 await pausePlayback({ accessToken });
             } else {
@@ -336,6 +342,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const state = await getCurrentPlaybackState({ accessToken });
+            if (!state) {
+                console.log('No active playback state');
+                return;
+            }
+            
             await toggleShuffle({ accessToken, state: !state.shuffle_state });
             const updateFn = createUpdatePlaybackState();
             if (updateFn) updateFn();
@@ -354,6 +365,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const state = await getCurrentPlaybackState({ accessToken });
+            if (!state) {
+                console.log('No active playback state');
+                return;
+            }
+            
             let nextState: 'off' | 'track' | 'context';
             
             switch (state.repeat_state) {
@@ -383,12 +399,35 @@ document.addEventListener('DOMContentLoaded', () => {
 function startPlaybackUpdates(accessToken: string) {
     const updatePlaybackState = async () => {
         try {
-            const state = await getCurrentPlaybackState({ accessToken });
-            if (state) {
-                updateNowPlayingUI(state);
+            const currentToken = getStoredAccessToken();
+            if (!currentToken) {
+                console.log('Access token expired or not available, re-authenticating...');
+                const newToken = await handleAuthentication();
+                if (!newToken) {
+                    console.error('Failed to re-authenticate');
+                    updateNowPlayingUI(null);
+                    return;
+                }
             }
+
+            const state = await getCurrentPlaybackState({ accessToken: currentToken || accessToken });
+            updateNowPlayingUI(state ?? null);
         } catch (error) {
             console.error('Error updating playback state:', error);
+            if (error instanceof Error && error.message.includes('401')) {
+                // Token expired, try to re-authenticate
+                console.log('Token expired, re-authenticating...');
+                const newToken = await handleAuthentication();
+                if (newToken) {
+                    // Retry the update with the new token
+                    const state = await getCurrentPlaybackState({ accessToken: newToken });
+                    updateNowPlayingUI(state ?? null);
+                } else {
+                    updateNowPlayingUI(null);
+                }
+            } else {
+                updateNowPlayingUI(null);
+            }
         }
     };
 
@@ -399,7 +438,7 @@ function startPlaybackUpdates(accessToken: string) {
 }
 
 // UI Update Functions
-function updateNowPlayingUI(state: any) {
+function updateNowPlayingUI(state: PlaybackState | null) {
     const nowPlayingArt = document.getElementById('nowPlayingArt');
     const nowPlayingTitle = document.getElementById('nowPlayingTitle');
     const nowPlayingArtist = document.getElementById('nowPlayingArtist');
@@ -412,75 +451,92 @@ function updateNowPlayingUI(state: any) {
     const playlistName = document.getElementById('playlistName');
     const nextTrack = document.getElementById('nextTrack');
 
-    if (state.item) {
-        if (nowPlayingArt) nowPlayingArt.setAttribute('src', state.item.album.images[0].url);
-        if (nowPlayingTitle) nowPlayingTitle.textContent = state.item.name;
-        if (nowPlayingArtist) nowPlayingArtist.textContent = state.item.artists.map((a: any) => a.name).join(', ');
-        if (progressBar) progressBar.style.width = `${(state.progress_ms / state.item.duration_ms) * 100}%`;
-        if (currentTime) currentTime.textContent = formatTime(state.progress_ms);
-        if (totalTime) totalTime.textContent = formatTime(state.item.duration_ms);
-        if (playPauseBtn) playPauseBtn.textContent = state.is_playing ? '⏸️' : '▶️';
-        if (shuffleBtn) shuffleBtn.classList.toggle('active', state.shuffle_state);
-        if (repeatBtn) repeatBtn.setAttribute('data-state', state.repeat_state);
-
-        // Update context information
-        if (state.context) {
-            if (playlistName) {
-                const contextType = state.context.type;
-                if (contextType === 'playlist') {
-                    // Fetch playlist details to get the name
-                    const fetchPlaylistName = async () => {
-                        const accessToken = getStoredAccessToken();
-                        if (!accessToken) return;
-
-                        try {
-                            const playlistId = state.context.uri.split(':').pop();
-                            const response = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}`, {
-                                headers: {
-                                    'Authorization': `Bearer ${accessToken}`
-                                }
-                            });
-                            
-                            if (response.ok) {
-                                const playlistData = await response.json();
-                                playlistName.textContent = playlistData.name;
-                            } else {
-                                playlistName.textContent = 'Playlist';
-                            }
-                        } catch (error) {
-                            console.error('Error fetching playlist name:', error);
-                            playlistName.textContent = 'Playlist';
-                        }
-                    };
-
-                    fetchPlaylistName();
-                } else {
-                    playlistName.textContent = state.context.type;
-                }
-            }
-        }
-
-        // Update next track information
-        const updateQueueInfo = async () => {
-            const accessToken = getStoredAccessToken();
-            if (!accessToken) return;
-
-            try {
-                const queue = await getQueue({ accessToken });
-                if (queue.queue && queue.queue.length > 0 && nextTrack) {
-                    const nextTrackInfo = queue.queue[0];
-                    nextTrack.textContent = `${nextTrackInfo.name} - ${nextTrackInfo.artists.map((a: any) => a.name).join(', ')}`;
-                } else if (nextTrack) {
-                    nextTrack.textContent = '-';
-                }
-            } catch (error) {
-                console.error('Error getting queue:', error);
-                if (nextTrack) nextTrack.textContent = '-';
-            }
-        };
-
-        updateQueueInfo();
+    // Clear UI when no state is available
+    if (!state || !state.item) {
+        if (nowPlayingArt) nowPlayingArt.setAttribute('src', '');
+        if (nowPlayingTitle) nowPlayingTitle.textContent = 'No track playing';
+        if (nowPlayingArtist) nowPlayingArtist.textContent = '';
+        if (progressBar) progressBar.style.width = '0%';
+        if (currentTime) currentTime.textContent = '0:00';
+        if (totalTime) totalTime.textContent = '0:00';
+        if (playPauseBtn) playPauseBtn.textContent = '▶️';
+        if (shuffleBtn) shuffleBtn.classList.remove('active');
+        if (repeatBtn) repeatBtn.setAttribute('data-state', 'off');
+        if (playlistName) playlistName.textContent = '';
+        if (nextTrack) nextTrack.textContent = '-';
+        return;
     }
+
+    // At this point, we know state and state.item are not null
+    const { item, progress_ms, is_playing, shuffle_state, repeat_state, context } = state;
+
+    if (nowPlayingArt) nowPlayingArt.setAttribute('src', item.album.images[0].url);
+    if (nowPlayingTitle) nowPlayingTitle.textContent = item.name;
+    if (nowPlayingArtist) nowPlayingArtist.textContent = item.artists.map((a: any) => a.name).join(', ');
+    if (progressBar) progressBar.style.width = `${(progress_ms / item.duration_ms) * 100}%`;
+    if (currentTime) currentTime.textContent = formatTime(progress_ms);
+    if (totalTime) totalTime.textContent = formatTime(item.duration_ms);
+    if (playPauseBtn) playPauseBtn.textContent = is_playing ? '⏸️' : '▶️';
+    if (shuffleBtn) shuffleBtn.classList.toggle('active', shuffle_state);
+    if (repeatBtn) repeatBtn.setAttribute('data-state', repeat_state);
+
+    // Update context information
+    if (context && playlistName) {
+        const contextType = context.type;
+        if (contextType === 'playlist') {
+            // Fetch playlist details to get the name
+            const fetchPlaylistName = async () => {
+                const accessToken = getStoredAccessToken();
+                if (!accessToken) return;
+
+                try {
+                    const playlistId = context.uri.split(':').pop();
+                    if (!playlistId) return;
+                    
+                    const response = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${accessToken}`
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        const playlistData = await response.json();
+                        playlistName.textContent = playlistData.name;
+                    } else {
+                        playlistName.textContent = 'Playlist';
+                    }
+                } catch (error) {
+                    console.error('Error fetching playlist name:', error);
+                    playlistName.textContent = 'Playlist';
+                }
+            };
+
+            fetchPlaylistName();
+        } else {
+            playlistName.textContent = contextType;
+        }
+    }
+
+    // Update next track information
+    const updateQueueInfo = async () => {
+        const accessToken = getStoredAccessToken();
+        if (!accessToken) return;
+
+        try {
+            const queue = await getQueue({ accessToken });
+            if (queue.queue && queue.queue.length > 0 && nextTrack) {
+                const nextTrackInfo = queue.queue[0];
+                nextTrack.textContent = `${nextTrackInfo.name} - ${nextTrackInfo.artists.map((a: any) => a.name).join(', ')}`;
+            } else if (nextTrack) {
+                nextTrack.textContent = '-';
+            }
+        } catch (error) {
+            console.error('Error getting queue:', error);
+            if (nextTrack) nextTrack.textContent = '-';
+        }
+    };
+
+    updateQueueInfo();
 }
 
 function formatTime(ms: number): string {
