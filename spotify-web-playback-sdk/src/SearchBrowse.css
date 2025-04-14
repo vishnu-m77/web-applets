@@ -1,0 +1,147 @@
+.search-browse-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #1a1a1a;
+    border-top: 1px solid #333;
+}
+
+.search-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.search-input {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 4px;
+    background-color: #2a2a2a;
+    color: white;
+    font-size: 16px;
+}
+
+.search-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #1db954;
+}
+
+.search-button {
+    padding: 12px 24px;
+    background-color: #1db954;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.search-button:hover {
+    background-color: #1ed760;
+}
+
+.search-button:disabled {
+    background-color: #4a4a4a;
+    cursor: not-allowed;
+}
+
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 10px;
+}
+
+.tab {
+    padding: 8px 16px;
+    background: none;
+    border: none;
+    color: #b3b3b3;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.tab:hover {
+    color: white;
+}
+
+.tab.active {
+    color: #1db954;
+    border-bottom: 2px solid #1db954;
+}
+
+.results-container {
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.item:hover {
+    background-color: #2a2a2a;
+}
+
+.item-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 4px;
+    object-fit: cover;
+}
+
+.item-info {
+    flex: 1;
+}
+
+.item-info h4 {
+    margin: 0;
+    color: white;
+    font-size: 16px;
+}
+
+.item-info p {
+    margin: 5px 0 0;
+    color: #b3b3b3;
+    font-size: 14px;
+}
+
+.loading, .error, .no-results {
+    text-align: center;
+    padding: 20px;
+    color: #b3b3b3;
+}
+
+.error {
+    color: #ff6b6b;
+}
+
+/* Scrollbar styling */
+.results-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.results-container::-webkit-scrollbar-track {
+    background: #1a1a1a;
+}
+
+.results-container::-webkit-scrollbar-thumb {
+    background: #4a4a4a;
+    border-radius: 4px;
+}
+
+.results-container::-webkit-scrollbar-thumb:hover {
+    background: #666;
+} 

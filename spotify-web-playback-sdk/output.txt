@@ -1,0 +1,24 @@
+
+> web-playback-sdk-sample-app@0.1.0 start
+> export NODE_OPTIONS=--openssl-legacy-provider && react-scripts start
+
+Attempting to bind to HOST environment variable: 127.0.0.1
+If this was unintentional, check that you haven't mistakenly set it in your shell.
+Learn more here: https://cra.link/advanced-config
+
+[HPM] Proxy created: /  -> http://127.0.0.1:5001
+[34mℹ[39m [90m｢wds｣[39m: Project is running at http://127.0.0.1:3000/
+[34mℹ[39m [90m｢wds｣[39m: webpack output is served from 
+[34mℹ[39m [90m｢wds｣[39m: Content not from webpack is served from /Users/vishnu/Documents/GitHub/web-applets/spotify-web-playback-sdk/public
+[34mℹ[39m [90m｢wds｣[39m: 404s will fallback to /
+Starting the development server...
+
+Compiled successfully!
+
+You can now view web-playback-sdk-sample-app in the browser.
+
+  http://127.0.0.1:3000
+
+Note that the development build is not optimized.
+To create a production build, use npm run build.
+
