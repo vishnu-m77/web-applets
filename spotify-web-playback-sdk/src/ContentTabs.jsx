@@ -171,13 +171,13 @@ function ContentTabs({ token, onTrackSelect }) {
                                             onClick={() => onTrackSelect(track.uri, 'track')}
                                         >
                                             <img 
-                                                src={track.album.images[0]?.url} 
+                                                src={track.album?.images?.[0]?.url || 'https://via.placeholder.com/150?text=No+Image'} 
                                                 alt={track.name}
                                                 className="item-image"
                                             />
                                             <div className="item-info">
                                                 <h4>{track.name}</h4>
-                                                <p>{track.artists.map(artist => artist.name).join(', ')}</p>
+                                                <p>{track.artists?.map(artist => artist.name).join(', ') || 'Unknown Artist'}</p>
                                             </div>
                                         </div>
                                     ))}
@@ -194,13 +194,13 @@ function ContentTabs({ token, onTrackSelect }) {
                                             onClick={() => onTrackSelect(album.uri, 'album')}
                                         >
                                             <img 
-                                                src={album.images[0]?.url} 
+                                                src={album.images?.[0]?.url || 'https://via.placeholder.com/150?text=No+Image'} 
                                                 alt={album.name}
                                                 className="item-image"
                                             />
                                             <div className="item-info">
                                                 <h4>{album.name}</h4>
-                                                <p>{album.artists.map(artist => artist.name).join(', ')}</p>
+                                                <p>{album.artists?.map(artist => artist.name).join(', ') || 'Unknown Artist'}</p>
                                             </div>
                                         </div>
                                     ))}
@@ -220,13 +220,13 @@ function ContentTabs({ token, onTrackSelect }) {
                                 onClick={() => onTrackSelect(playlist.uri, 'playlist')}
                             >
                                 <img 
-                                    src={playlist.images[0]?.url} 
+                                    src={playlist.images?.[0]?.url || 'https://via.placeholder.com/150?text=No+Image'} 
                                     alt={playlist.name}
                                     className="item-image"
                                 />
                                 <div className="item-info">
                                     <h4>{playlist.name}</h4>
-                                    <p>{playlist.tracks.total} tracks</p>
+                                    <p>{playlist.tracks?.total || 0} tracks</p>
                                 </div>
                             </div>
                         ))}
@@ -243,16 +243,13 @@ function ContentTabs({ token, onTrackSelect }) {
                                 onClick={() => onTrackSelect(item.track.uri, 'track')}
                             >
                                 <img 
-                                    src={item.track.album.images[0]?.url} 
-                                    alt={item.track.name}
+                                    src={item.track?.album?.images?.[0]?.url || 'https://via.placeholder.com/150?text=No+Image'} 
+                                    alt={item.track?.name}
                                     className="item-image"
                                 />
                                 <div className="item-info">
-                                    <h4>{item.track.name}</h4>
-                                    <p>{item.track.artists.map(artist => artist.name).join(', ')}</p>
-                                    <p className="played-at">
-                                        {new Date(item.played_at).toLocaleString()}
-                                    </p>
+                                    <h4>{item.track?.name || 'Unknown Track'}</h4>
+                                    <p>{item.track?.artists?.map(artist => artist.name).join(', ') || 'Unknown Artist'}</p>
                                 </div>
                             </div>
                         ))}
