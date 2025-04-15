@@ -34,7 +34,13 @@ npm install
 
 ## Running the example
 
-Start both client and server with the following command:
+Start the server with:
+
+```bash
+npm run server
+```
+
+Start the client with:
 
 ```bash
 npm run dev
