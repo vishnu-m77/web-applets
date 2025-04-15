@@ -38,86 +38,124 @@ function WebPlayback(props) {
                 return;
             }
 
-            const player = new window.Spotify.Player({
-                name: 'Web Playback SDK',
-                getOAuthToken: cb => { 
-                    if (props.token) {
-                        cb(props.token);
-                    } else {
-                        console.error('Token not available for playback');
-                    }
-                },
-                volume: 0.5
-            });
-
-            setPlayer(player);
-
-            player.addListener('ready', ({ device_id }) => {
-                console.log('Ready with Device ID', device_id);
-                setPlayerReady(true);
-            });
-
-            player.addListener('not_ready', ({ device_id }) => {
-                console.log('Device ID has gone offline', device_id);
-                setPlayerReady(false);
-            });
-
-            player.addListener('initialization_error', ({ message }) => {
-                console.error('Failed to initialize:', message);
-                setPlayerReady(false);
-            });
-
-            player.addListener('authentication_error', ({ message }) => {
-                console.error('Failed to authenticate:', message);
-                setPlayerReady(false);
-            });
-
-            player.addListener('account_error', ({ message }) => {
-                console.error('Failed to validate Spotify account:', message);
-                setPlayerReady(false);
-            });
-
-            player.addListener('playback_error', ({ message }) => {
-                console.error('Playback error:', message);
-            });
-
-            player.addListener('player_state_changed', (state => {
-                if (!state) {
-                    return;
+            // Validate token before creating player
+            fetch('https://api.spotify.com/v1/me', {
+                headers: {
+                    'Authorization': `Bearer ${props.token}`
                 }
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error('Invalid token');
+                }
+                return response.json();
+            }).then(() => {
+                const player = new window.Spotify.Player({
+                    name: 'Web Playback SDK',
+                    getOAuthToken: cb => { 
+                        if (props.token) {
+                            cb(props.token);
+                        } else {
+                            console.error('Token not available for playback');
+                        }
+                    },
+                    volume: 0.5
+                });
 
-                setTrack(state.track_window.current_track);
-                setNextTrack(state.track_window.next_tracks[0] || defaultTrack);
-                setPaused(state.paused);
-                setShuffle(state.shuffle);
-                setRepeat(state.repeat_mode);
+                setPlayer(player);
 
-                // Only fetch playlist info if we have a valid context and the player is ready
-                if (state.context && state.context.uri && is_player_ready) {
-                    const contextUri = state.context.uri;
-                    if (contextUri.startsWith('spotify:playlist:')) {
-                        // Extract playlist ID from URI
-                        const playlistId = contextUri.split(':')[2];
-                        if (playlistId) {
-                            fetchPlaylistInfo(playlistId);
+                player.addListener('ready', ({ device_id }) => {
+                    console.log('Ready with Device ID', device_id);
+                    setPlayerReady(true);
+                    
+                    // Transfer playback to this device
+                    fetch('https://api.spotify.com/v1/me/player', {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${props.token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            device_ids: [device_id],
+                            play: true
+                        })
+                    }).catch(error => {
+                        console.error('Error transferring playback:', error);
+                    });
+                });
+
+                player.addListener('not_ready', ({ device_id }) => {
+                    console.log('Device ID has gone offline', device_id);
+                    setPlayerReady(false);
+                });
+
+                player.addListener('initialization_error', ({ message }) => {
+                    console.error('Failed to initialize:', message);
+                    setPlayerReady(false);
+                });
+
+                player.addListener('authentication_error', ({ message }) => {
+                    console.error('Failed to authenticate:', message);
+                    setPlayerReady(false);
+                });
+
+                player.addListener('account_error', ({ message }) => {
+                    console.error('Failed to validate Spotify account:', message);
+                    setPlayerReady(false);
+                });
+
+                player.addListener('playback_error', ({ message }) => {
+                    console.error('Playback error:', message);
+                    if (message.includes('401') || message.includes('403')) {
+                        console.error('Token may be expired. Please refresh the page to get a new token.');
+                        setPlayerReady(false);
+                    }
+                });
+
+                player.addListener('player_state_changed', (state => {
+                    if (!state) {
+                        console.log('No state available - player might be disconnected');
+                        setActive(false);
+                        return;
+                    }
+
+                    setTrack(state.track_window.current_track);
+                    setNextTrack(state.track_window.next_tracks[0] || defaultTrack);
+                    setPaused(state.paused);
+                    setShuffle(state.shuffle);
+                    setRepeat(state.repeat_mode);
+
+                    // Only fetch playlist info if we have a valid context and the player is ready
+                    if (state.context && state.context.uri && is_player_ready) {
+                        const contextUri = state.context.uri;
+                        if (contextUri.startsWith('spotify:playlist:')) {
+                            // Extract playlist ID from URI
+                            const playlistId = contextUri.split(':')[2];
+                            if (playlistId) {
+                                fetchPlaylistInfo(playlistId);
+                            }
+                        } else {
+                            setPlaylistInfo(null);
                         }
                     } else {
                         setPlaylistInfo(null);
                     }
-                } else {
-                    setPlaylistInfo(null);
-                }
 
-                player.getCurrentState().then(state => {
-                    (!state) ? setActive(false) : setActive(true);
-                });
-            }));
+                    player.getCurrentState().then(state => {
+                        (!state) ? setActive(false) : setActive(true);
+                    });
+                }));
 
-            player.connect();
+                player.connect();
+            }).catch(error => {
+                console.error('Token validation failed:', error);
+                setPlayerReady(false);
+            });
 
             // Cleanup function
             return () => {
-                player.disconnect();
+                if (player) {
+                    player.disconnect();
+                }
                 document.body.removeChild(script);
             };
         };

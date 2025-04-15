@@ -107,7 +107,7 @@ body {
 .btn-spotify {
     background-color: #1DB954;
     border: none;
-    border-radius: 50%;
+    border-radius: 150%;
     width: 40px;
     height: 40px;
     display: flex;
